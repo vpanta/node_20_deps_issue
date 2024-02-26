@@ -1,0 +1,7 @@
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("//packages/foo:foo.bzl", "foo")
+
+npm_link_all_packages()
+
+foo(name = "run_foo")
+

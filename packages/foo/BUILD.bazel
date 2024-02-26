@@ -1,0 +1,37 @@
+load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_library")
+load("@aspect_rules_js//npm:defs.bzl", "npm_package")
+
+js_library(
+    name = "foo_js",
+    srcs = glob(["src/**"]),
+    visibility = ["//visibility:private"],
+    deps = [
+        "//:node_modules/mathjs",
+    ],
+)
+
+directory_path(
+  name = "__foo__entry_point",
+  directory = ":foo_pkg",
+  path = "./bin/cli.js",
+  visibility = [":__pkg__"],
+)
+
+js_binary(
+  name = "foo",
+  entry_point = ":__foo__entry_point",
+  data = [":foo_pkg"],
+  visibility = ["//visibility:public"],
+)
+
+npm_package(
+    name = "foo_pkg",
+    srcs = [
+        ":bin/cli.js",
+        ":foo_js",
+        ":package.json",
+    ],
+    package = "@node_20_deps_issue",
+    visibility = ["//:__pkg__"],
+)
